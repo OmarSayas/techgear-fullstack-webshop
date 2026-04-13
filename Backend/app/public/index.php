@@ -57,6 +57,49 @@ $router->get('/admin/users', 'UserController@getAllUsers');
 $router->put('/admin/users/(\d+)', 'UserController@updateUserRole');
 
 
+// Debug endpoint: database connection status and test query
+$router->get('/debug/db', function() {
+    header('Content-Type: application/json');
+
+    $type     = getenv('DB_TYPE')     ?: 'mysql';
+    $host     = getenv('DB_HOST')     ?: 'mysql';
+    $port     = getenv('DB_PORT')     ?: '3306';
+    $database = getenv('DB_DATABASE') ?: 'developmentdb';
+    $username = getenv('DB_USERNAME') ?: 'root';
+    $password = getenv('DB_PASSWORD') ?: 'secret123';
+
+    try {
+        $pdo = new PDO(
+            "$type:host=$host;port=$port;dbname=$database;charset=utf8mb4",
+            $username,
+            $password
+        );
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $stmt = $pdo->query('SELECT COUNT(*) AS count FROM product');
+        $row  = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        echo json_encode([
+            'status'     => 'success',
+            'env'        => [
+                'DB_HOST'     => $host,
+                'DB_PORT'     => $port,
+                'DB_DATABASE' => $database,
+                'DB_USERNAME' => $username,
+            ],
+            'test_query' => [
+                'sql'    => 'SELECT COUNT(*) AS count FROM product',
+                'result' => $row,
+            ],
+        ]);
+    } catch (\PDOException $e) {
+        http_response_code(500);
+        echo json_encode([
+            'status' => 'error',
+            'error'  => $e->getMessage(),
+        ]);
+    }
+});
 
 // Run it!
 $router->run();
