@@ -29,6 +29,24 @@ try {
         echo json_encode(["errorMessage" => "Route not found"]);
     });
 
+    $router->get('/debug-products', function() {
+        error_reporting(E_ALL);
+        ini_set('display_errors', '1');
+        try {
+            if (!class_exists('Controllers\ProductController')) {
+                echo "Controllers\ProductController DOES NOT EXIST!\n";
+            } else {
+                echo "Class exists, attempting instantiation...\n";
+                $c = new \Controllers\ProductController();
+                echo "Instantiated! Calling getAll()...\n";
+                $c->getAll();
+                echo "getAll() finished!\n";
+            }
+        } catch (\Throwable $e) {
+            echo "CAUGHT THROWABLE: " . $e->getMessage() . "\n" . $e->getTraceAsString();
+        }
+    });
+
 // routes for the products endpoint
 $router->get('/products', 'ProductController@getAll');
 $router->get('/products/(\d+)', 'ProductController@getOne');
