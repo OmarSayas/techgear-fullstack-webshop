@@ -31,7 +31,7 @@ class ProductRepository extends Repository
 
             return $products;
         } catch (PDOException $e) {
-            echo $e;
+            throw new \Exception("Failed to retrieve products: " . $e->getMessage());
         }
     }
 
@@ -49,7 +49,7 @@ class ProductRepository extends Repository
 
             return $product;
         } catch (PDOException $e) {
-            echo $e;
+            throw new \Exception("Failed to retrieve product: " . $e->getMessage());
         }
     }
 
@@ -85,7 +85,7 @@ class ProductRepository extends Repository
 
             return $this->getOne($product->id);
         } catch (PDOException $e) {
-            echo $e;
+            throw new \Exception("Failed to insert product: " . $e->getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ class ProductRepository extends Repository
 
             return $this->getOne($product->id);
         } catch (PDOException $e) {
-            echo $e;
+            throw new \Exception("Failed to update product: " . $e->getMessage());
         }
     }
 
