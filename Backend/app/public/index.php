@@ -22,6 +22,11 @@ require __DIR__ . '/../vendor/autoload.php';
 $router = new \Bramus\Router\Router();
 
 $router->setNamespace('Controllers');
+$router->set404(function () {
+    header("Content-Type: application/json; charset=utf-8");
+    http_response_code(404);
+    echo json_encode(["errorMessage" => "Route not found"]);
+});
 
 // routes for the products endpoint
 $router->get('/products', 'ProductController@getAll');
