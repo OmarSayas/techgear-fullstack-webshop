@@ -1,0 +1,45 @@
+version: '3'
+services:
+    nginx:
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf
+            - ./app:/app
+    php:
+        build:
+            context: .
+            dockerfile: PHP.Dockerfile
+        working_dir: /app
+        environment:
+            APP_ENV: ${APP_ENV:-development}
+            APP_CORS_ORIGIN: ${APP_CORS_ORIGIN:-http://localhost:5173}
+            DB_HOST: ${DB_HOST:-mysql}
+            DB_DATABASE: ${DB_DATABASE:-developmentdb}
+            DB_USERNAME: ${DB_USERNAME:-root}
+            DB_PASSWORD: ${DB_PASSWORD:-secret123}
+            JWT_SECRET: ${JWT_SECRET:-techgear-local-secret}
+        volumes:
+            - ./app:/app
+    mysql:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-secret123}
+            MYSQL_USER: ${MYSQL_USER:-developer}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD:-secret123}
+            MYSQL_DATABASE: ${MYSQL_DATABASE:-developmentdb}
+        volumes:
+            - mysqldata:/var/lib/mysql
+            - ./sql:/docker-entrypoint-initdb.d
+        ports:
+            - 3306:3306
+    phpmyadmin:
+        image: phpmyadmin:latest
+        ports:
+            - 8080:80
+        environment:
+            - PMA_HOST=mysql
+        restart: unless-stopped
+volumes:
+    mysqldata: {}

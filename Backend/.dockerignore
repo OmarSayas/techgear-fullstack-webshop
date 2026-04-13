@@ -1,0 +1,9 @@
+.git
+.gitignore
+docker-compose.yml
+insomnia.json
+nginx.conf
+PHP.Dockerfile
+sql
+app/vendor
+app/.phpunit.result.cache
