@@ -18,15 +18,16 @@ ini_set("log_errors", "1");
 
 require __DIR__ . '/../vendor/autoload.php';
 
-// Create Router instance
-$router = new \Bramus\Router\Router();
+try {
+    // Create Router instance
+    $router = new \Bramus\Router\Router();
 
-$router->setNamespace('Controllers');
-$router->set404(function () {
-    header("Content-Type: application/json; charset=utf-8");
-    http_response_code(404);
-    echo json_encode(["errorMessage" => "Route not found"]);
-});
+    $router->setNamespace('Controllers');
+    $router->set404(function () {
+        header("Content-Type: application/json; charset=utf-8");
+        http_response_code(404);
+        echo json_encode(["errorMessage" => "Route not found"]);
+    });
 
 // routes for the products endpoint
 $router->get('/products', 'ProductController@getAll');
@@ -67,7 +68,6 @@ $router->put('/admin/users/(\d+)', 'UserController@updateUserRole');
 
 
 // Run it!
-try {
     $router->run();
 } catch (\Throwable $e) {
     error_log($e->__toString());
