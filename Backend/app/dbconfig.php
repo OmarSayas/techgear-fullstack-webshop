@@ -13,8 +13,8 @@ if (!function_exists("readEnvValue")) {
 }
 
 $type = readEnvValue("DB_TYPE", "mysql");
-$servername = readEnvValue("DB_HOST", readEnvValue("MYSQLHOST", "mysql"));
-$port = readEnvValue("DB_PORT", readEnvValue("MYSQLPORT", "3306"));
-$username = readEnvValue("DB_USERNAME", readEnvValue("MYSQLUSER", "root"));
-$password = readEnvValue("DB_PASSWORD", readEnvValue("MYSQLPASSWORD", "secret123"));
-$database = readEnvValue("DB_DATABASE", readEnvValue("MYSQLDATABASE", "developmentdb"));
+$servername = readEnvValue("DB_HOST", "mysql");
+$port = readEnvValue("DB_PORT", "3306");
+$username = readEnvValue("DB_USERNAME", "root");
+$password = readEnvValue("DB_PASSWORD", "secret123");
+$database = readEnvValue("DB_DATABASE", "developmentdb");
