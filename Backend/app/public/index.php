@@ -1,5 +1,6 @@
 <?php
 $allowedOrigin = getenv("APP_CORS_ORIGIN") ?: "http://localhost:5173";
+$allowedOrigin = trim($allowedOrigin, " \t\n\r\0\x0B\"'");
 header("Access-Control-Allow-Origin: " . $allowedOrigin);
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -11,7 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
 
 error_reporting(E_ALL);
 $appEnv = getenv("APP_ENV") ?: "development";
+$appEnv = trim($appEnv, " \t\n\r\0\x0B\"'");
 ini_set("display_errors", $appEnv === "development" ? "1" : "0");
+ini_set("log_errors", "1");
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -59,4 +62,11 @@ $router->put('/admin/users/(\d+)', 'UserController@updateUserRole');
 
 
 // Run it!
-$router->run();
+try {
+    $router->run();
+} catch (\Throwable $e) {
+    error_log($e->__toString());
+    header("Content-Type: application/json; charset=utf-8");
+    http_response_code(500);
+    echo json_encode(["errorMessage" => "Internal server error"]);
+}

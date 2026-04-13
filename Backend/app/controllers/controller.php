@@ -10,7 +10,12 @@ class Controller
 {
     protected function getJwtSecret(): string
     {
-        return getenv("JWT_SECRET") ?: "banaan";
+        $value = getenv("JWT_SECRET");
+        if ($value === false || $value === "") {
+            return "banaan";
+        }
+
+        return trim($value, " \t\n\r\0\x0B\"'");
     }
 
     protected function getAuthorizationHeader(): ?string
