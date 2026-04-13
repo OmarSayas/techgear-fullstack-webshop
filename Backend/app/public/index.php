@@ -16,12 +16,29 @@ $appEnv = trim($appEnv, " \t\n\r\0\x0B\"'");
 ini_set("display_errors", $appEnv === "development" ? "1" : "0");
 ini_set("log_errors", "1");
 
-require __DIR__ . '/../vendor/autoload.php';
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+if (!is_file($autoloadPath)) {
+    $autoloadPath = __DIR__ . '/../../vendor/autoload.php';
+}
+
+if (!is_file($autoloadPath)) {
+    header("Content-Type: application/json; charset=utf-8");
+    http_response_code(500);
+    echo json_encode(["errorMessage" => "Composer autoload not found"]);
+    exit;
+}
+
+require $autoloadPath;
 
 // Create Router instance
 $router = new \Bramus\Router\Router();
 
 $router->setNamespace('Controllers');
+$router->set404(function () {
+    header("Content-Type: application/json; charset=utf-8");
+    http_response_code(404);
+    echo json_encode(["errorMessage" => "Route not found"]);
+});
 
 // routes for the products endpoint
 $router->get('/products', 'ProductController@getAll');
