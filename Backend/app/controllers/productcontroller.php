@@ -17,7 +17,6 @@ class ProductController extends Controller
 
     public function getAll()
     {
-
         $offset = NULL;
         $limit = NULL;
 
@@ -28,9 +27,12 @@ class ProductController extends Controller
             $limit = $_GET["limit"];
         }
 
-        $products = $this->service->getAll($offset, $limit);
-
-        $this->respond($products);
+        try {
+            $products = $this->service->getAll($offset, $limit);
+            $this->respond($products);
+        } catch (Exception $e) {
+            $this->respondWithError(500, $e->getMessage());
+        }
     }
 
     public function getOne($id)
