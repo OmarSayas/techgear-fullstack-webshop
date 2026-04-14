@@ -10,10 +10,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 
 COPY app/composer.json app/composer.lock ./
-RUN composer install --no-dev --no-interaction
+RUN composer install --no-dev --no-interaction --no-autoloader
 
 COPY app/ ./
-RUN composer dump-autoload --optimize
+RUN composer dump-autoload --optimize --no-dev
 
 COPY railway-router.php /app/railway-router.php
 
