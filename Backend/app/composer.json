@@ -1,11 +1,11 @@
 {
     "autoload": {
         "psr-4": {
-          "Routers\\": ["routers", "Routers"],
-          "Controllers\\": ["controllers", "Controllers"],
-          "Services\\": ["services", "Services"],
-          "Models\\": ["models", "Models"],
-          "Repositories\\": ["repositories", "Repositories"]
+          "Routers\\": "routers",
+          "Controllers\\": "controllers",
+          "Services\\": "services",
+          "Models\\": "models",
+          "Repositories\\": "repositories"
         }
     },
     "require": {
