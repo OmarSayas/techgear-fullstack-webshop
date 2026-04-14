@@ -10,9 +10,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 
 COPY app/composer.json app/composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --no-interaction
 
 COPY app/ ./
+RUN composer dump-autoload --optimize
+
 COPY railway-router.php /app/railway-router.php
 
 ENV PORT=8080

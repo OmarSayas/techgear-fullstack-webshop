@@ -10,7 +10,12 @@ class Controller
 {
     protected function getJwtSecret(): string
     {
-        return getenv("JWT_SECRET") ?: "banaan";
+        $value = getenv("JWT_SECRET");
+        if ($value === false || $value === "") {
+            return "banaan";
+        }
+
+        return trim($value, " \t\n\r\0\x0B\"'");
     }
 
     protected function getAuthorizationHeader(): ?string
@@ -65,7 +70,12 @@ class Controller
     {
         header("Content-Type: application/json; charset=utf-8");
         http_response_code($httpcode);
-        echo json_encode($data);
+        $json = json_encode($data);
+        if ($json === false) {
+            echo json_encode(["errorMessage" => "JSON encoding error: " . json_last_error_msg()]);
+        } else {
+            echo $json;
+        }
     }
 
     function createObjectFromPostedJson($className)

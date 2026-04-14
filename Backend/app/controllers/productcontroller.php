@@ -7,6 +7,14 @@ use Services\ProductService;
 
 class ProductController extends Controller
 {
+    private $service;
+
+    // initialize services
+    function __construct()
+    {
+        $this->service = new ProductService();
+    }
+
     public function getAll()
     {
         $offset = NULL;
@@ -20,8 +28,7 @@ class ProductController extends Controller
         }
 
         try {
-            $service = new ProductService();
-            $products = $service->getAll($offset, $limit);
+            $products = $this->service->getAll($offset, $limit);
             $this->respond($products);
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
@@ -31,25 +38,24 @@ class ProductController extends Controller
     public function getOne($id)
     {
         try {
-            $service = new ProductService();
-            $product = $service->getOne($id);
-
-            if (!$product) {
-                $this->respondWithError(404, "Product not found");
-                return;
-            }
-
-            $this->respond($product);
+            $product = $this->service->getOne($id);
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
+            return;
         }
+
+        if (!$product) {
+            $this->respondWithError(404, "Product not found");
+            return;
+        }
+
+        $this->respond($product);
     }
 
     public function create()
     {
         $this->requireRole('admin');
         try {
-            $service = new ProductService();
             $product = $this->createObjectFromPostedJson("Models\\Product");
 
             if ($product->price < 0 || $product->stock < 0) {
@@ -57,7 +63,7 @@ class ProductController extends Controller
                 return;
             }
 
-            $product = $service->insert($product);
+            $product = $this->service->insert($product);
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
             return;
@@ -70,7 +76,6 @@ class ProductController extends Controller
     {
         $this->requireRole('admin');
         try {
-            $service = new ProductService();
             $product = $this->createObjectFromPostedJson("Models\\Product");
 
             if ($product->price < 0 || $product->stock < 0) {
@@ -78,7 +83,7 @@ class ProductController extends Controller
                 return;
             }
 
-            $product = $service->update($product, $id);
+            $product = $this->service->update($product, $id);
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
             return;
@@ -91,8 +96,7 @@ class ProductController extends Controller
     {
         $this->requireRole('admin');
         try {
-            $service = new ProductService();
-            $service->delete($id);
+            $this->service->delete($id);
             $this->respond(true);
         } catch (Exception $e) {
             $this->respondWithError(500, $e->getMessage());
